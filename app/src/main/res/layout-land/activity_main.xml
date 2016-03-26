@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activity.GettingTwoImagesActivity">
+
+    <ImageView
+        android:id="@+id/ImageBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorAccent" />
+
+    <LinearLayout
+
+        android:id="@+id/linearLayoutFrameFirst"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="78dp"
+        android:layout_marginStart="78dp"
+        android:layout_marginTop="31dp"
+        android:background="@color/colorPrimaryDark"
+        android:clickable="true"
+        android:padding="10dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <ImageView
+            android:id="@+id/PhotoViewFirst"
+            android:layout_width="100dp"
+            android:layout_height="120dp"
+            android:background="@color/colorBlack"
+            android:scaleType="centerCrop" />
+    </LinearLayout>
+
+    <LinearLayout
+
+        android:id="@+id/linearLayoutFrameSecond"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="27dp"
+        android:layout_marginEnd="113dp"
+        android:layout_marginRight="113dp"
+        android:background="@color/colorPrimaryDark"
+        android:padding="10dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true">
+
+        <ImageView
+            android:id="@+id/PhotoViewSecond"
+            android:layout_width="100dp"
+            android:layout_height="120dp"
+            android:background="@color/colorBlack"
+            android:fromDegrees="0"
+            android:scaleType="centerCrop"
+            android:toDegrees="100" />
+    </LinearLayout>
+
+
+</RelativeLayout>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:screenOrientation="portrait"
+    tools:context=".activity.GettingTwoImagesActivity">
+
+    <RelativeLayout
+        android:id="@+id/firstActivityRelativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/imageBackgroundMain"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/secondActivityBackground"
+        android:scaleType="centerCrop"
+        android:src="@drawable/bubbles_background" />
+
+    <LinearLayout
+
+        android:id="@+id/linearLayoutFrameFirst"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="40dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="80dp"
+        android:background="@color/colorGrey"
+        android:clickable="true"
+        android:paddingBottom="30dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="10dp">
+
+        <ImageView
+            android:id="@+id/PhotoViewFirst"
+            android:layout_width="@dimen/mini_image_size"
+            android:layout_height="@dimen/mini_image_size"
+            android:background="@color/colorBlack"
+            android:contentDescription="@string/secondActivityFirstPhoto"
+            android:scaleType="centerCrop" />
+    </LinearLayout>
+
+    <LinearLayout
+
+        android:id="@+id/linearLayoutFrameSecond"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="100dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginRight="40dp"
+        android:background="@color/colorGrey"
+        android:paddingBottom="30dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="10dp">
+
+        <ImageView
+            android:id="@+id/PhotoViewSecond"
+            android:layout_width="@dimen/mini_image_size"
+            android:layout_height="@dimen/mini_image_size"
+            android:background="@color/colorBlack"
+            android:contentDescription="@string/secondActivitySecondPhoto"
+            android:fromDegrees="0"
+            android:scaleType="centerCrop"
+            android:toDegrees="100" />
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/nextButton"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/oval_button"
+        android:clickable="true"
+        android:contentDescription="@string/imageButton"
+        android:src="@drawable/ic_check_circle_18pt_3x" />
+
+
+</RelativeLayout>

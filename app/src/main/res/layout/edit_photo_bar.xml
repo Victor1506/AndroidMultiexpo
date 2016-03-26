@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <ImageButton
+android:background="@color/colorGrey"
+        android:src="@drawable/ic_rotate_right_24dp"
+        android:id="@+id/rotateModeImageButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+
+        />
+
+    <ImageButton
+android:background="@color/colorGrey"
+        android:src="@drawable/ic_settings_display_24dp"
+        android:id="@+id/transparencyModeImageButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/rotateModeImageButton"
+        android:layout_toEndOf="@+id/rotateModeImageButton" />
+
+    <ImageButton
+        android:background="@color/colorGrey"
+        android:src="@drawable/ic_content_cut_24dp"
+        android:id="@+id/cropperModeImageButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/transparencyModeImageButton"
+        android:layout_toEndOf="@+id/transparencyModeImageButton" />
+</RelativeLayout>

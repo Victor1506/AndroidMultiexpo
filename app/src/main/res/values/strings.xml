@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">AndroidMultiexpo</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+
+    <string name="next">Обработать</string>
+    <string name="firstFragment">first Fragment</string>
+    <string name="imageButton">imageButtonNext</string>
+    <string name="secondActivityBackground">secondActivityBackground</string>
+    <string name="secondActivityFirstPhoto">secondActivityFirstPhoto</string>
+    <string name="secondActivitySecondPhoto">secondActivitySecondPhoto</string>
+    <string name="hide_route">21</string>
+    <string name="refresh">22</string>
+    <string name="next_step">23</string>
+    <string name="all_steps">24</string>
+    <string name="my_account">12</string>
+    <string name="log_out">11</string>
+    <string name="btn_go_back">25</string>
+    <string name="btn_next">26</string>
+    <string name="menu_share">share</string>
+    <string name="action_save">сохранить</string>
+</resources>
