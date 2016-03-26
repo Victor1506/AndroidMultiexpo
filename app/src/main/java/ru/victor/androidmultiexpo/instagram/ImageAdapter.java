@@ -7,7 +7,7 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
@@ -48,7 +48,9 @@ public class ImageAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ImageView imageView = new ImageView(mContext);
-        Picasso.with(mContext).load(mUriStringArr.get(position)).into(imageView);
+        Glide.with(mContext)
+                .load(mUriStringArr.get(position))
+                .into(imageView);
 
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         imageView.setLayoutParams(new GridView.LayoutParams(IMAGE_IN_GRID_SIZE, IMAGE_IN_GRID_SIZE));

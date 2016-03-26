@@ -46,7 +46,7 @@ public class GettingTwoImagesActivity extends AppCompatActivity implements View.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_getting_two_images);
 
         mTopWindowLinearLayout = (LinearLayout) findViewById(R.id.linearLayoutFrameFirst);
         mBottomWindowLinearLayout = (LinearLayout) findViewById(R.id.linearLayoutFrameSecond);
@@ -137,7 +137,7 @@ public class GettingTwoImagesActivity extends AppCompatActivity implements View.
 
         // создание первой кнопки меню и обработка ее нажатия
         SubActionButton topImageInstagramButton = createActionButton(itemBuilder,
-                R.drawable.ic_camera_enhance_18pt_3x);
+                R.drawable.ic_instagram);
         topImageInstagramButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -150,7 +150,7 @@ public class GettingTwoImagesActivity extends AppCompatActivity implements View.
 
         // создание второй кнопки меню и обработка ее нажатия
         SubActionButton topImageGalleryButton = createActionButton(itemBuilder,
-                R.drawable.ic_perm_media_3x);
+                R.drawable.ic_gallery);
         topImageGalleryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -162,7 +162,7 @@ public class GettingTwoImagesActivity extends AppCompatActivity implements View.
 
         // создание третей кнопки меню и обработка ее нажатия
         SubActionButton bottomImageInstagramButton = createActionButton(itemBuilder,
-                R.drawable.ic_camera_enhance_18pt_3x);
+                R.drawable.ic_instagram);
         bottomImageInstagramButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -175,7 +175,7 @@ public class GettingTwoImagesActivity extends AppCompatActivity implements View.
 
         // создание четвертой кнопки меню и обработка ее нажатия
         SubActionButton bottomImageGalleryButton = createActionButton(itemBuilder,
-                R.drawable.ic_perm_media_3x);
+                R.drawable.ic_gallery);
         bottomImageGalleryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

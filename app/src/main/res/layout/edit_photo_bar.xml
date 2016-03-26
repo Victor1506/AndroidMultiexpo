@@ -5,31 +5,31 @@
     android:orientation="vertical">
 
     <ImageButton
-android:background="@color/colorGrey"
-        android:src="@drawable/ic_rotate_right_24dp"
         android:id="@+id/rotateModeImageButton"
         android:layout_width="40dp"
         android:layout_height="40dp"
+        android:background="@color/colorGrey"
+        android:src="@drawable/ic_rotate"
 
         />
 
     <ImageButton
-android:background="@color/colorGrey"
-        android:src="@drawable/ic_settings_display_24dp"
         android:id="@+id/transparencyModeImageButton"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/rotateModeImageButton"
         android:layout_toRightOf="@+id/rotateModeImageButton"
-        android:layout_toEndOf="@+id/rotateModeImageButton" />
+        android:background="@color/colorGrey"
+        android:src="@drawable/ic_transparency" />
 
     <ImageButton
-        android:background="@color/colorGrey"
-        android:src="@drawable/ic_content_cut_24dp"
         android:id="@+id/cropperModeImageButton"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/transparencyModeImageButton"
         android:layout_toRightOf="@+id/transparencyModeImageButton"
-        android:layout_toEndOf="@+id/transparencyModeImageButton" />
+        android:background="@color/colorGrey"
+        android:src="@drawable/ic_scissors" />
 </RelativeLayout>

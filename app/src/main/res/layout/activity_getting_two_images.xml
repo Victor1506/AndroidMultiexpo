@@ -78,6 +78,7 @@
     </LinearLayout>
 
     <ImageButton
+
         android:id="@+id/nextButton"
         android:layout_width="55dp"
         android:layout_height="55dp"
@@ -89,7 +90,6 @@
         android:background="@drawable/oval_button"
         android:clickable="true"
         android:contentDescription="@string/imageButton"
-        android:src="@drawable/ic_check_circle_18pt_3x" />
-
+        android:src="@drawable/ic_okay" />
 
 </RelativeLayout>

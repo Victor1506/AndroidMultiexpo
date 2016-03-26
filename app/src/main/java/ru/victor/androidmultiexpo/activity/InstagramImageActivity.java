@@ -13,8 +13,7 @@ public class InstagramImageActivity extends AppCompatActivity{
 
     public static final String INSTAGRAM_EXTRA = "link";
 
-    private static InstagramConnectFragment sInstagramConnectFragment;
-    private int tem = 123;
+    private InstagramConnectFragment mInstagramConnectFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,11 +21,11 @@ public class InstagramImageActivity extends AppCompatActivity{
 
         GettingTwoImagesActivity.showProgress("connect...", this);
 
-        sInstagramConnectFragment = new InstagramConnectFragment();
+        mInstagramConnectFragment = new InstagramConnectFragment();
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, sInstagramConnectFragment)
+                    .add(R.id.container, mInstagramConnectFragment)
                     .commit();
         }
     }

@@ -56,7 +56,7 @@ public class RedactorActivity extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_second);
+        setContentView(R.layout.activity_redactor);
         GettingTwoImagesActivity.showProgress("обработка изображений", this);
 
         mImageProgressSeekBar = (SeekBar) findViewById(R.id.imageAlphaSeekBar);
