@@ -14,8 +14,7 @@ public class InstagramImageActivity extends AppCompatActivity{
     public static final String INSTAGRAM_EXTRA = "link";
 
     private static InstagramConnectFragment sInstagramConnectFragment;
-private int temp = 1234;
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
