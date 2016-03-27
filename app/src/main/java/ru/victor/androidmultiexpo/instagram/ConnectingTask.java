@@ -15,6 +15,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 
 import ru.victor.androidmultiexpo.activity.GettingTwoImagesActivity;
+import ru.victor.androidmultiexpo.helper.Constants;
 
 /**
  * Created by Виктор on 22.02.2016.
@@ -22,8 +23,6 @@ import ru.victor.androidmultiexpo.activity.GettingTwoImagesActivity;
 
 // получение списока ссылок на изображения из Instagram
 public class ConnectingTask extends AsyncTask<Void, Void, ArrayList<String>> {
-
-    private static final String INSTAGRAM_IMAGE_SIZE = "standard_resolution";
 
     public interface OnImagesURlGettingListener {
         void onImagesURlGetting(ArrayList<String> arr);
@@ -87,7 +86,7 @@ public class ConnectingTask extends AsyncTask<Void, Void, ArrayList<String>> {
                         JSONObject nja = (JSONObject) jo.getJSONObject("images");
 
                         JSONObject purl3 = (JSONObject) nja
-                                .getJSONObject(INSTAGRAM_IMAGE_SIZE);
+                                .getJSONObject(Constants.INSTAGRAM_IMAGE_SIZE);
                         URL url = new URL(purl3.getString("url"));
 
                         urlString.add(purl3.getString("url"));

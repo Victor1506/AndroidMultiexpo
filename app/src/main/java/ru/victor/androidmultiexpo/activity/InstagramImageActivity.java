@@ -8,10 +8,9 @@ import android.util.Log;
 
 import ru.victor.androidmultiexpo.R;
 import ru.victor.androidmultiexpo.fragments.InstagramConnectFragment;
+import ru.victor.androidmultiexpo.helper.Constants;
 
 public class InstagramImageActivity extends AppCompatActivity{
-
-    public static final String INSTAGRAM_EXTRA = "link";
 
     private InstagramConnectFragment mInstagramConnectFragment;
     @Override
@@ -35,7 +34,7 @@ public class InstagramImageActivity extends AppCompatActivity{
         super.onActivityResult(requestCode, resultCode, data);
 
         Fragment fragment = getSupportFragmentManager()
-                .findFragmentByTag(InstagramConnectFragment.SOCIAL_NETWORK_TAG);
+                .findFragmentByTag(Constants.SOCIAL_NETWORK_TAG);
         if (fragment != null) {
             fragment.onActivityResult(requestCode, resultCode, data);
             Log.d("tag", "activity result " + fragment.getClass());

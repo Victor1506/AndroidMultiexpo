@@ -6,12 +6,20 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 
 /**
- * Created by Виктор on 13.02.2016.
+ * Created by Виктор on 27.03.2016.
  */
-public class CreateOverlayImage {
+public class OverlayImageSingleton {
+    private static OverlayImageSingleton ourInstance = new OverlayImageSingleton();
 
-    public Bitmap createNewAlphaImage(Bitmap firstImage, Bitmap secondImage, int firstRotateAngle,
-                                      int secondRotateAngle, int firstImageAlpha, int secondImageAlpha) {
+    public static OverlayImageSingleton getInstance() {
+        return ourInstance;
+    }
+
+    private OverlayImageSingleton() {
+    }
+
+    public Bitmap createNewOverlayImage(Bitmap firstImage, Bitmap secondImage, int firstRotateAngle,
+                                        int secondRotateAngle, int firstImageAlpha, int secondImageAlpha) {
         Bitmap newBitmap = null;
 
         int w;
@@ -28,8 +36,10 @@ public class CreateOverlayImage {
             h = secondImage.getHeight();
         }
 
-        Bitmap newFirstImage = Bitmap.createScaledBitmap(rotateBitmap(firstImage, firstRotateAngle), w, h, false);
-        Bitmap newSecondImage = Bitmap.createScaledBitmap(rotateBitmap(secondImage, secondRotateAngle), w, h, false);
+        Bitmap newFirstImage = Bitmap.createScaledBitmap(rotateBitmap(firstImage,
+                firstRotateAngle), w, h, false);
+        Bitmap newSecondImage = Bitmap.createScaledBitmap(rotateBitmap(secondImage,
+                secondRotateAngle), w, h, false);
 
         Bitmap.Config config = newFirstImage.getConfig();
         if (config == null) {
@@ -49,7 +59,8 @@ public class CreateOverlayImage {
         return newBitmap;
     }
 
-    public static Bitmap rotateBitmap(Bitmap source, float angle) {
+    //поворот изображения на указанный градус
+    private static Bitmap rotateBitmap(Bitmap source, float angle) {
         Matrix matrix = new Matrix();
         matrix.postRotate(angle);
         return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);

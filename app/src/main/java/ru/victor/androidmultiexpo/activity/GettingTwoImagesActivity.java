@@ -18,19 +18,9 @@ import com.oguzdev.circularfloatingactionmenu.library.FloatingActionMenu;
 import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
 
 import ru.victor.androidmultiexpo.R;
+import ru.victor.androidmultiexpo.helper.Constants;
 
 public class GettingTwoImagesActivity extends AppCompatActivity implements View.OnClickListener {
-    private static final int LOADING_IMAGE_HIGHT = 200;
-    private static final int LOADING_IMAGE_WIGHT = 200;
-    private static final int TOP_IMAGE_ROTATE_ANGLE = -15;
-    private static final int BOTTOM_IMAGE_ROTATE_ANGLE = 15;
-
-    public static final int FIRST_PHOTO_GALLERY_REQUEST = 1;
-    public static final int SECOND_PHOTO_GALLERY_REQUEST = 2;
-    public static final int FIRST_PHOTO_INSTAGRAM_REQUEST = 3;
-    public static final int SECOND_PHOTO_INSTAGRAM_REQUEST = 4;
-    public static final String FIRST_IMAGE_URI = "firstURI";
-    public static final String SECOND_IMAGE_URI = "secondURI";
 
     private static ProgressDialog sProgressDialog;
     private LinearLayout mTopWindowLinearLayout;
@@ -41,7 +31,8 @@ public class GettingTwoImagesActivity extends AppCompatActivity implements View.
     private Intent mInstagramActivityIntent;
     private FloatingActionMenu mActionMenuFirstPhoto;
     private FloatingActionMenu mActionMenuSecondPhoto;
-    private  ImageButton mNextButton;
+    private ImageButton mNextButton;
+    private Intent mPhotoPickerIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,14 +46,16 @@ public class GettingTwoImagesActivity extends AppCompatActivity implements View.
         mNextButton = (ImageButton) findViewById(R.id.nextButton);
         mNextButton.setOnClickListener(this);
 
+        mPhotoPickerIntent = new Intent(Intent.ACTION_PICK);
+        mPhotoPickerIntent.setType("image/*");
+        mInstagramActivityIntent = new Intent(this, InstagramImageActivity.class);
+        mRedactorActivityIntent = new Intent(this, RedactorActivity.class);
+
         // поворот окошек на указанные градусы
-        rotateImages(TOP_IMAGE_ROTATE_ANGLE, BOTTOM_IMAGE_ROTATE_ANGLE);
+        rotateImages(Constants.TOP_IMAGE_ROTATE_ANGLE, Constants.BOTTOM_IMAGE_ROTATE_ANGLE);
 
         //создание всплывающих кнопок
         setFloatingButtonMenu();
-
-        mInstagramActivityIntent = new Intent(this, InstagramImageActivity.class);
-        mRedactorActivityIntent = new Intent(this, RedactorActivity.class);
     }
 
     //ProgressDialog с уведомлением загрузки
@@ -87,136 +80,129 @@ public class GettingTwoImagesActivity extends AppCompatActivity implements View.
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        // загрузка возвращаемого значения и помещение ссылки на него в mRedactorActivityIntent
+        // загрузка изображения и помещение ссылки на него для mRedactorActivityIntent
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
-                case FIRST_PHOTO_GALLERY_REQUEST:
+                case Constants.FIRST_PHOTO_GALLERY_REQUEST:
                     setBitmapIntoImageView(data.getDataString(), mTopImageView);
-                    mRedactorActivityIntent.putExtra(FIRST_IMAGE_URI, data.getData().toString());
+                    mRedactorActivityIntent.putExtra(Constants.FIRST_IMAGE_URI, data.getData().toString());
                     break;
-                case FIRST_PHOTO_INSTAGRAM_REQUEST:
-                    setBitmapIntoImageView(data.getStringExtra(InstagramImageActivity.INSTAGRAM_EXTRA), mTopImageView);
-                    mRedactorActivityIntent.putExtra(FIRST_IMAGE_URI,
-                            data.getStringExtra(InstagramImageActivity.INSTAGRAM_EXTRA));
+                case Constants.FIRST_PHOTO_INSTAGRAM_REQUEST:
+                    setBitmapIntoImageView(data.getStringExtra(Constants.INSTAGRAM_EXTRA), mTopImageView);
+                    mRedactorActivityIntent.putExtra(Constants.FIRST_IMAGE_URI,
+                            data.getStringExtra(Constants.INSTAGRAM_EXTRA));
                     break;
-                case SECOND_PHOTO_GALLERY_REQUEST:
+                case Constants.SECOND_PHOTO_GALLERY_REQUEST:
                     setBitmapIntoImageView(data.getDataString(), mBottomImageView);
-                    mRedactorActivityIntent.putExtra(SECOND_IMAGE_URI, data.getData().toString());
+                    mRedactorActivityIntent.putExtra(Constants.SECOND_IMAGE_URI, data.getData().toString());
                     break;
-                case SECOND_PHOTO_INSTAGRAM_REQUEST:
-                    setBitmapIntoImageView(data.getStringExtra(InstagramImageActivity.INSTAGRAM_EXTRA), mBottomImageView);
-                    mRedactorActivityIntent.putExtra(SECOND_IMAGE_URI,
-                            data.getStringExtra(InstagramImageActivity.INSTAGRAM_EXTRA));
+                case Constants.SECOND_PHOTO_INSTAGRAM_REQUEST:
+                    setBitmapIntoImageView(data.getStringExtra(Constants.INSTAGRAM_EXTRA), mBottomImageView);
+                    mRedactorActivityIntent.putExtra(Constants.SECOND_IMAGE_URI,
+                            data.getStringExtra(Constants.INSTAGRAM_EXTRA));
                     break;
-
             }
         }
     }
 
+    //загрузка изображений в указаный ImageView
     private void setBitmapIntoImageView(String uri, ImageView imageView) {
         Glide.with(this)
                 .load(uri)
-                .override(LOADING_IMAGE_WIGHT, LOADING_IMAGE_HIGHT)
+                .override(Constants.IMAGE_LOW_WIGHT, Constants.IMAGE_LOW_HIGHT)
                 .into(imageView);
     }
 
     // создание меню с всплывающими кнопками
     protected void setFloatingButtonMenu() {
-        final Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-        photoPickerIntent.setType("image/*");
         SubActionButton.Builder itemBuilder = new SubActionButton.Builder(this);
-        itemBuilder.setLayoutParams(new FrameLayout.LayoutParams(90, 90));
+        itemBuilder.setLayoutParams(new FrameLayout.LayoutParams(Constants.FLOATING_BUTTON_SIZE,
+                Constants.FLOATING_BUTTON_SIZE));
         itemBuilder.setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.oval_button));
 
-        // создание первой кнопки меню и обработка ее нажатия
+        //создание первого меню
+        createTopActionMenu(itemBuilder);
+        //создание второго меню
+        createBottomActionMenu(itemBuilder);
+    }
+
+    //создание первого всплывающего меню
+    private void createTopActionMenu(SubActionButton.Builder itemBuilder) {
+        //создание кнопки доступа к Instagram
         SubActionButton topImageInstagramButton = createActionButton(itemBuilder,
-                R.drawable.ic_instagram);
-        topImageInstagramButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               // GettingTwoImagesActivity.showProgress("connecting...", GettingTwoImagesActivity.this);
-                startActivityForResult(mInstagramActivityIntent, FIRST_PHOTO_INSTAGRAM_REQUEST);
-                mActionMenuFirstPhoto.close(true);
-                if (mActionMenuSecondPhoto.isOpen()) mActionMenuSecondPhoto.close(true);
-            }
-        });
-
-        // создание второй кнопки меню и обработка ее нажатия
+                R.drawable.ic_instagram, R.id.topInstagram);
+        //создание кнопки доступа к Галереи
         SubActionButton topImageGalleryButton = createActionButton(itemBuilder,
-                R.drawable.ic_gallery);
-        topImageGalleryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivityForResult(photoPickerIntent, FIRST_PHOTO_GALLERY_REQUEST);
-                mActionMenuFirstPhoto.close(true);
-                if (mActionMenuSecondPhoto.isOpen()) mActionMenuSecondPhoto.close(true);
-            }
-        });
+                R.drawable.ic_gallery, R.id.topGallery);
 
-        // создание третей кнопки меню и обработка ее нажатия
-        SubActionButton bottomImageInstagramButton = createActionButton(itemBuilder,
-                R.drawable.ic_instagram);
-        bottomImageInstagramButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivityForResult(mInstagramActivityIntent, SECOND_PHOTO_INSTAGRAM_REQUEST);
-                mActionMenuSecondPhoto.close(true);
-                if (mActionMenuFirstPhoto.isOpen()) mActionMenuFirstPhoto.close(true);
-              //  GettingTwoImagesActivity.showProgress("connecting...", GettingTwoImagesActivity.this);
-            }
-        });
-
-        // создание четвертой кнопки меню и обработка ее нажатия
-        SubActionButton bottomImageGalleryButton = createActionButton(itemBuilder,
-                R.drawable.ic_gallery);
-        bottomImageGalleryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivityForResult(photoPickerIntent, SECOND_PHOTO_GALLERY_REQUEST);
-                mActionMenuSecondPhoto.close(true);
-                if (mActionMenuFirstPhoto.isOpen()) mActionMenuFirstPhoto.close(true);
-            }
-        });
-
-        //создание всплывающего меню для первого окошка
+        //создание меню
         mActionMenuFirstPhoto = new FloatingActionMenu.Builder(this)
                 .addSubActionView(topImageInstagramButton)
                 .addSubActionView(topImageGalleryButton)
                 .attachTo(mTopWindowLinearLayout)
-                .setRadius(300)
-                .setStartAngle(-35)
-                .setEndAngle(5)
+                .setRadius(Constants.FLOATING_ACTION_MENU_RADIUS)
+                .setStartAngle(Constants.TOP_ACTION_MENU_START_ANGLE)
+                .setEndAngle(Constants.TOP_ACTION_MENU_END_ANGLE)
                 .build();
+    }
 
-        //создание всплывающего меню для второго окошка
+    //создание второго всплывающего меню
+    private void createBottomActionMenu(SubActionButton.Builder itemBuilder) {
+        //создание кнопки доступа к Instagram
+        SubActionButton bottomImageInstagramButton = createActionButton(itemBuilder,
+                R.drawable.ic_instagram, R.id.bottomInstagram);
+        //создание кнопки доступа к Галереи
+        SubActionButton bottomImageGalleryButton = createActionButton(itemBuilder,
+                R.drawable.ic_gallery, R.id.bottomGallery);
+
+        //создание меню
         mActionMenuSecondPhoto = new FloatingActionMenu.Builder(this)
                 .addSubActionView(bottomImageGalleryButton)
                 .addSubActionView(bottomImageInstagramButton)
                 .attachTo(mBottomWindowLinearLayout)
-                .setRadius(300)
-                .setStartAngle(160)
-                .setEndAngle(200)
+                .setRadius(Constants.FLOATING_ACTION_MENU_RADIUS)
+                .setStartAngle(Constants.BOTTOM_ACTION_MENU_START_ANGLE)
+                .setEndAngle(Constants.BOTTOM_ACTION_MENU_END_ANGLE)
                 .build();
     }
 
-    private SubActionButton createActionButton(SubActionButton.Builder itemBuilder, int imageRes) {
+    //создание всплывающей кнопеи для меню
+    private SubActionButton createActionButton(SubActionButton.Builder itemBuilder,
+                                               int imageRes, int id) {
         SubActionButton subActionButton;
         ImageView itemIcon = new ImageView(this);
         itemIcon.setImageResource(imageRes);
         subActionButton = itemBuilder.setContentView(itemIcon).build();
+        subActionButton.setId(id);
+        subActionButton.setOnClickListener(this);
         return subActionButton;
     }
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
+            case R.id.topInstagram:
+                startActivityForResult(mInstagramActivityIntent, Constants.FIRST_PHOTO_INSTAGRAM_REQUEST);
+                mActionMenuFirstPhoto.close(true);
+                if (mActionMenuSecondPhoto.isOpen()) mActionMenuSecondPhoto.close(true);
+                break;
+            case R.id.topGallery:
+                startActivityForResult(mPhotoPickerIntent, Constants.FIRST_PHOTO_GALLERY_REQUEST);
+                mActionMenuFirstPhoto.close(true);
+                if (mActionMenuSecondPhoto.isOpen()) mActionMenuSecondPhoto.close(true);
+                break;
+            case R.id.bottomInstagram:
+                startActivityForResult(mInstagramActivityIntent, Constants.SECOND_PHOTO_INSTAGRAM_REQUEST);
+                mActionMenuSecondPhoto.close(true);
+                if (mActionMenuFirstPhoto.isOpen()) mActionMenuFirstPhoto.close(true);
+                break;
+            case R.id.bottomGallery:
+                startActivityForResult(mPhotoPickerIntent,Constants.SECOND_PHOTO_GALLERY_REQUEST);
+                mActionMenuSecondPhoto.close(true);
+                if (mActionMenuFirstPhoto.isOpen()) mActionMenuFirstPhoto.close(true);
+                break;
             case R.id.nextButton:
                 buttonNext();
                 break;
@@ -224,7 +210,7 @@ public class GettingTwoImagesActivity extends AppCompatActivity implements View.
     }
 
     //отображение и обработка нажатия кнопки перехода если оба окошка заполненны
-    private void buttonNext(){
+    private void buttonNext() {
         if (mTopImageView.getDrawable() != null && mBottomImageView.getDrawable() != null) {
             startActivity(mRedactorActivityIntent);
             if (mActionMenuFirstPhoto.isOpen() || mActionMenuSecondPhoto.isOpen()) {

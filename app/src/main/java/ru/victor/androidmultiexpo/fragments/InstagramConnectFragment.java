@@ -22,7 +22,7 @@ import java.util.concurrent.ExecutionException;
 
 import ru.victor.androidmultiexpo.R;
 import ru.victor.androidmultiexpo.activity.GettingTwoImagesActivity;
-import ru.victor.androidmultiexpo.activity.InstagramImageActivity;
+import ru.victor.androidmultiexpo.helper.Constants;
 import ru.victor.androidmultiexpo.instagram.ConnectingTask;
 import ru.victor.androidmultiexpo.instagram.ImageAdapter;
 
@@ -35,8 +35,6 @@ public class InstagramConnectFragment extends Fragment implements OnLoginComplet
     private static final String INSTAGRAM_CLIENT_SECRET = "274546c957e04b2bb4fe59c45e423890";
     private static final String REDIRECT_URL = "https://vk.com/id64987011";
     private static final String instagramScope = "basic+public_content+follower_list+comments+relationships+likes";
-
-    public static final String SOCIAL_NETWORK_TAG = "SocialIntegrationMain.SOCIAL_NETWORK_TAG";
 
     private SocialNetworkManager mSocialNetworkManager;
     private ConnectingTask mConnectingTask;
@@ -52,7 +50,7 @@ public class InstagramConnectFragment extends Fragment implements OnLoginComplet
         mImagesGridView = (GridView) rootView.findViewById(R.id.instagraGridView);
         mImagesGridView.setOnItemClickListener(this);
 
-        mSocialNetworkManager = (SocialNetworkManager) getFragmentManager().findFragmentByTag(SOCIAL_NETWORK_TAG);
+        mSocialNetworkManager = (SocialNetworkManager) getFragmentManager().findFragmentByTag(Constants.SOCIAL_NETWORK_TAG);
         if (mSocialNetworkManager == null) {
             mSocialNetworkManager = new SocialNetworkManager();
 
@@ -60,7 +58,7 @@ public class InstagramConnectFragment extends Fragment implements OnLoginComplet
                     INSTAGRAM_CLIENT_KEY, INSTAGRAM_CLIENT_SECRET, REDIRECT_URL, instagramScope);
             mSocialNetworkManager.addSocialNetwork(instagramNetwork);
 
-            getFragmentManager().beginTransaction().add(mSocialNetworkManager, SOCIAL_NETWORK_TAG).commit();
+            getFragmentManager().beginTransaction().add(mSocialNetworkManager, Constants.SOCIAL_NETWORK_TAG).commit();
             mSocialNetworkManager.setOnInitializationCompleteListener(this);
 
             // loading social person
@@ -127,7 +125,7 @@ public class InstagramConnectFragment extends Fragment implements OnLoginComplet
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         // возвращаем ссылку на изображение из Instagram в GettingTwoImagesActivity
         Intent intent = new Intent();
-        intent.putExtra(InstagramImageActivity.INSTAGRAM_EXTRA, mInstagramImageAdapter.getUrlString(position));
+        intent.putExtra(Constants.INSTAGRAM_EXTRA, mInstagramImageAdapter.getUrlString(position));
         getActivity().setResult(Activity.RESULT_OK, intent);
         getActivity().finish();
     }

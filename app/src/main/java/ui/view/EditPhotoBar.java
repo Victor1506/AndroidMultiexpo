@@ -9,6 +9,7 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
 import ru.victor.androidmultiexpo.R;
+import ru.victor.androidmultiexpo.helper.Constants;
 
 
 /**
@@ -19,10 +20,6 @@ public class EditPhotoBar extends RelativeLayout implements View.OnClickListener
     public interface WorkModeListener {
         void onSelectedMode(int currentMode);
     }
-
-    public static final int ROTATE_MODE = 1;
-    public static final int TRANSPARENCY_MODE = 2;
-    public static final int CROPPER_MODE = 3;
 
     private WorkModeListener mModeListener;
     private ImageButton mRotateModeImageButton;
@@ -61,14 +58,14 @@ public class EditPhotoBar extends RelativeLayout implements View.OnClickListener
     private void setRotateMode() {
         mRotateModeImageButton.setBackground(ContextCompat.getDrawable(getContext(),
                 R.drawable.oval_button));
-        mCurrentMode = ROTATE_MODE;
+        mCurrentMode = Constants.ROTATE_MODE;
         mModeListener.onSelectedMode(mCurrentMode);
     }
 
     private void setTransparencyMode() {
         mTransparencyModeImageButton.setBackground(ContextCompat.getDrawable(getContext(),
                 R.drawable.oval_button));
-        mCurrentMode = TRANSPARENCY_MODE;
+        mCurrentMode = Constants.TRANSPARENCY_MODE;
         if (mModeListener != null) {
             mModeListener.onSelectedMode(mCurrentMode);
         }
@@ -77,7 +74,7 @@ public class EditPhotoBar extends RelativeLayout implements View.OnClickListener
     private void setCropperMode() {
         mCropperModeImageButton.setBackground(ContextCompat.getDrawable(getContext(),
                 R.drawable.oval_button));
-        mCurrentMode = CROPPER_MODE;
+        mCurrentMode = Constants.CROPPER_MODE;
         mModeListener.onSelectedMode(mCurrentMode);
     }
 

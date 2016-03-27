@@ -2,7 +2,6 @@ package ru.victor.androidmultiexpo.activity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -18,18 +17,14 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.edmodo.cropper.CropImageView;
 
-import ru.victor.androidmultiexpo.helper.CreateOverlayImage;
 import ru.victor.androidmultiexpo.R;
+import ru.victor.androidmultiexpo.helper.Constants;
 import ru.victor.androidmultiexpo.helper.FileSaveHelper;
+import ru.victor.androidmultiexpo.helper.OverlayImageSingleton;
 import ui.view.EditPhotoBar;
 
 
 public class RedactorActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, EditPhotoBar.WorkModeListener {
-
-    private static final int MINI_LEFT_IMAGE_FOCUS_NUMBER = 1;
-    private static final int MINI_RIGHT_IMAGE_FOCUS_NUMBER = 2;
-    private static final int FOCUS_COLOR_GRAY = Color.parseColor("#BDBDBD");
-    private static final int FOCUS_COLOR_WHITE = Color.parseColor("#ffffff");
 
     private ImageView mBigRightImageView;
     private ImageView mBigLeftImageView;
@@ -49,7 +44,8 @@ public class RedactorActivity extends AppCompatActivity implements View.OnClickL
     private LinearLayout mLeftMiniImageLinearLayout;
     private LinearLayout mRightMiniImageLinearLayout;
     private EditPhotoBar mEditPhotoBar;
-    private CreateOverlayImage mCreatingNewImage;
+    private OverlayImageSingleton mImageSingleton;
+
     private ImageView mMiniLeftImageView;
     private ImageView mMiniRightImageView;
 
@@ -75,7 +71,7 @@ public class RedactorActivity extends AppCompatActivity implements View.OnClickL
 
         mCropperImage = (CropImageView) findViewById(R.id.cropperImage);
 
-        mCreatingNewImage = new CreateOverlayImage();
+        mImageSingleton = OverlayImageSingleton.getInstance();
 
         //добавление панели переключения режимов роботы с изображениями
         RelativeLayout containerEditPhotoBar = (RelativeLayout) findViewById(R.id.containerEditPhotoBar);
@@ -93,9 +89,9 @@ public class RedactorActivity extends AppCompatActivity implements View.OnClickL
         switch (number) {
             case 1:
                 Glide.with(this)
-                        .load(intent.getStringExtra(GettingTwoImagesActivity.FIRST_IMAGE_URI))
+                        .load(intent.getStringExtra(Constants.FIRST_IMAGE_URI))
                         .asBitmap()
-                        .override(512, 360)
+                        .override(Constants.IMAGE_MEDIUM_WIGHT,Constants.IMAGE_MEDIUM_HIGHT)
                         .into(new SimpleTarget<Bitmap>() {
                             @Override
                             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
@@ -110,9 +106,9 @@ public class RedactorActivity extends AppCompatActivity implements View.OnClickL
                 break;
             case 2:
                 Glide.with(this)
-                        .load(intent.getStringExtra(GettingTwoImagesActivity.SECOND_IMAGE_URI))
+                        .load(intent.getStringExtra(Constants.SECOND_IMAGE_URI))
                         .asBitmap()
-                        .override(512, 360)
+                        .override(Constants.IMAGE_MEDIUM_WIGHT,Constants.IMAGE_MEDIUM_HIGHT)
                         .into(new SimpleTarget<Bitmap>() {
                             @Override
                             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
@@ -140,26 +136,26 @@ public class RedactorActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        if (mEditPhotoBar.getCurrentMode() == EditPhotoBar.ROTATE_MODE) {
+        if (mEditPhotoBar.getCurrentMode() == Constants.ROTATE_MODE) {
             seekBar.setMax(4);
             switch (mFocusedImage) {
-                case MINI_LEFT_IMAGE_FOCUS_NUMBER:
+                case Constants.MINI_LEFT_IMAGE_FOCUS_NUMBER:
                     mLeftBigImageRotateAngle = progress * 90;
                     mBigLeftImageView.setRotation(mLeftBigImageRotateAngle);
                     break;
-                case MINI_RIGHT_IMAGE_FOCUS_NUMBER:
+                case Constants.MINI_RIGHT_IMAGE_FOCUS_NUMBER:
                     mRightBigImageRotateAngle = progress * 90;
                     mBigRightImageView.setRotation(mRightBigImageRotateAngle);
                     break;
             }
-        } else if (mEditPhotoBar.getCurrentMode() == EditPhotoBar.TRANSPARENCY_MODE) {
+        } else if (mEditPhotoBar.getCurrentMode() == Constants.TRANSPARENCY_MODE) {
             seekBar.setMax(255);
             switch (mFocusedImage) {
-                case MINI_LEFT_IMAGE_FOCUS_NUMBER:
+                case Constants.MINI_LEFT_IMAGE_FOCUS_NUMBER:
                     mLeftMiniImageProgressAlpha = progress;
                     mBigLeftImageView.setImageAlpha(mLeftMiniImageProgressAlpha);
                     break;
-                case MINI_RIGHT_IMAGE_FOCUS_NUMBER:
+                case Constants.MINI_RIGHT_IMAGE_FOCUS_NUMBER:
                     mRightMiniImageProgressAlpha = progress;
                     mBigRightImageView.setImageAlpha(mRightMiniImageProgressAlpha);
                     break;
@@ -180,16 +176,16 @@ public class RedactorActivity extends AppCompatActivity implements View.OnClickL
         setCropperImage();
         switch (v.getId()) {
             case R.id.MiniFrameFirst:
-                mFocusedImage = MINI_LEFT_IMAGE_FOCUS_NUMBER;
+                mFocusedImage = Constants.MINI_LEFT_IMAGE_FOCUS_NUMBER;
 
-                if (mEditPhotoBar.getCurrentMode() == EditPhotoBar.CROPPER_MODE) {
+                if (mEditPhotoBar.getCurrentMode() == Constants.CROPPER_MODE) {
                     mCropperImage.setImageBitmap(mLeftImageBitmap);
                     mCropperImageNumber = 1;
                 }
                 break;
             case R.id.MiniFrameSecond:
-                mFocusedImage = MINI_RIGHT_IMAGE_FOCUS_NUMBER;
-                if (mEditPhotoBar.getCurrentMode() == EditPhotoBar.CROPPER_MODE) {
+                mFocusedImage = Constants.MINI_RIGHT_IMAGE_FOCUS_NUMBER;
+                if (mEditPhotoBar.getCurrentMode() == Constants.CROPPER_MODE) {
                     mCropperImage.setImageBitmap(mRightImageBitmap);
                     /*mCropperImage.setImageBitmap(mCreatingNewImage.getImageForCropper(mRightImageBitmap,
                             mRightBigImageRotateAngle, mRightMiniImageProgressAlpha));*/
@@ -221,11 +217,11 @@ public class RedactorActivity extends AppCompatActivity implements View.OnClickL
         }
 
         if (mCropperImageNumber != 0) {
-            return mCreatingNewImage.createNewAlphaImage(mLeftCropperImageBitmap,
+            return mImageSingleton.createNewOverlayImage(mLeftCropperImageBitmap,
                     mRightCropperImageBitmap, mLeftBigImageRotateAngle, mRightBigImageRotateAngle,
                     mLeftMiniImageProgressAlpha, mRightMiniImageProgressAlpha);
         } else {
-            return mCreatingNewImage.createNewAlphaImage(mLeftImageBitmap,
+            return mImageSingleton.createNewOverlayImage(mLeftImageBitmap,
                     mRightImageBitmap, mLeftBigImageRotateAngle, mRightBigImageRotateAngle,
                     mLeftMiniImageProgressAlpha, mRightMiniImageProgressAlpha);
         }
@@ -233,7 +229,7 @@ public class RedactorActivity extends AppCompatActivity implements View.OnClickL
     }
 
     public void overlayImageCropper() {
-        Bitmap tempCropperBitmap = mCreatingNewImage.createNewAlphaImage(mLeftCropperImageBitmap,
+        Bitmap tempCropperBitmap = mImageSingleton.createNewOverlayImage(mLeftCropperImageBitmap,
                 mRightCropperImageBitmap, mLeftBigImageRotateAngle, mRightBigImageRotateAngle,
                 mLeftMiniImageProgressAlpha, mRightMiniImageProgressAlpha);
         mCropperImage.setImageBitmap(tempCropperBitmap);
@@ -241,16 +237,16 @@ public class RedactorActivity extends AppCompatActivity implements View.OnClickL
     }
 
     public void setFocusOnLayout(Boolean isSetFocus) {
-        mLeftMiniImageLinearLayout.setBackgroundColor(FOCUS_COLOR_GRAY);
-        mRightMiniImageLinearLayout.setBackgroundColor(FOCUS_COLOR_GRAY);
+        mLeftMiniImageLinearLayout.setBackgroundColor(Constants.FOCUS_COLOR_GRAY);
+        mRightMiniImageLinearLayout.setBackgroundColor(Constants.FOCUS_COLOR_GRAY);
 
         if (isSetFocus) {
             switch (mFocusedImage) {
-                case MINI_LEFT_IMAGE_FOCUS_NUMBER:
-                    mLeftMiniImageLinearLayout.setBackgroundColor(FOCUS_COLOR_WHITE);
+                case Constants.MINI_LEFT_IMAGE_FOCUS_NUMBER:
+                    mLeftMiniImageLinearLayout.setBackgroundColor(Constants.FOCUS_COLOR_WHITE);
                     break;
-                case MINI_RIGHT_IMAGE_FOCUS_NUMBER:
-                    mRightMiniImageLinearLayout.setBackgroundColor(FOCUS_COLOR_WHITE);
+                case Constants.MINI_RIGHT_IMAGE_FOCUS_NUMBER:
+                    mRightMiniImageLinearLayout.setBackgroundColor(Constants.FOCUS_COLOR_WHITE);
                     break;
             }
         }
@@ -280,7 +276,7 @@ public class RedactorActivity extends AppCompatActivity implements View.OnClickL
             case R.id.menu_item_save:
                 FileSaveHelper fileSaveHelper = new FileSaveHelper(RedactorActivity.this);
 
-                if (mEditPhotoBar.getCurrentMode() == EditPhotoBar.CROPPER_MODE) {
+                if (mEditPhotoBar.getCurrentMode() == Constants.CROPPER_MODE) {
                     mNewOverlayImageBitmap = mCropperImage.getCroppedImage();
                 } else {
                     //получение обрезаного или полного изображения
@@ -296,7 +292,7 @@ public class RedactorActivity extends AppCompatActivity implements View.OnClickL
     private void saveImage() {
         FileSaveHelper fileSaveHelper = new FileSaveHelper(RedactorActivity.this);
 
-        if (mEditPhotoBar.getCurrentMode() == EditPhotoBar.CROPPER_MODE) {
+        if (mEditPhotoBar.getCurrentMode() == Constants.CROPPER_MODE) {
             mNewOverlayImageBitmap = mCropperImage.getCroppedImage();
         } else {
             //получение обрезаного или полного изображения
@@ -315,13 +311,13 @@ public class RedactorActivity extends AppCompatActivity implements View.OnClickL
         mBigLeftImageView.setImageBitmap(mLeftCropperImageBitmap);
         mBigRightImageView.setImageBitmap(mRightCropperImageBitmap);
         switch (currentMode) {
-            case EditPhotoBar.ROTATE_MODE:
+            case Constants.ROTATE_MODE:
                 rotateImage();
                 break;
-            case EditPhotoBar.TRANSPARENCY_MODE:
+            case Constants.TRANSPARENCY_MODE:
                 transparencyImage();
                 break;
-            case EditPhotoBar.CROPPER_MODE:
+            case Constants.CROPPER_MODE:
                 cropperImage();
                 break;
         }

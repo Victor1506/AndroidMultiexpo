@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <item name="topInstagram" type="id"/>
+    <item name="topGallery" type="id"/>
+    <item name="bottomInstagram" type="id"/>
+    <item name="bottomGallery" type="id"/>
+</resources>

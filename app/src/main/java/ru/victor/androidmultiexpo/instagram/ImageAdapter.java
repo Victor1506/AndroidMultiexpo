@@ -11,12 +11,12 @@ import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
+import ru.victor.androidmultiexpo.helper.Constants;
+
 /**
  * Created by Виктор on 22.02.2016.
  */
 public class ImageAdapter extends BaseAdapter {
-
-    public static final int IMAGE_IN_GRID_SIZE = 350;
 
     private Context mContext;
     private ArrayList<String> mUriStringArr = null;
@@ -53,7 +53,8 @@ public class ImageAdapter extends BaseAdapter {
                 .into(imageView);
 
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        imageView.setLayoutParams(new GridView.LayoutParams(IMAGE_IN_GRID_SIZE, IMAGE_IN_GRID_SIZE));
+        imageView.setLayoutParams(new GridView.LayoutParams(Constants.IMAGE_IN_GRID_SIZE,
+                Constants.IMAGE_IN_GRID_SIZE));
         return imageView;
     }
 
