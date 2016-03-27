@@ -44,10 +44,10 @@ public class RedactorActivity extends AppCompatActivity implements View.OnClickL
     private LinearLayout mLeftMiniImageLinearLayout;
     private LinearLayout mRightMiniImageLinearLayout;
     private EditPhotoBar mEditPhotoBar;
-    private OverlayImageSingleton mImageSingleton;
-
+    private OverlayImageSingleton mOverlayImageSingleton;
     private ImageView mMiniLeftImageView;
     private ImageView mMiniRightImageView;
+    private FileSaveHelper fileSaveHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,13 +65,15 @@ public class RedactorActivity extends AppCompatActivity implements View.OnClickL
 
         mLeftMiniImageLinearLayout = (LinearLayout) findViewById(R.id.leftMiniImageLinearLayout);
         mRightMiniImageLinearLayout = (LinearLayout) findViewById(R.id.rightMiniImageLinearLayout);
-
         mBigRightImageView = (ImageView) findViewById(R.id.bigRightImageView);
         mBigLeftImageView = (ImageView) findViewById(R.id.bigLeftImageView);
-
         mCropperImage = (CropImageView) findViewById(R.id.cropperImage);
 
-        mImageSingleton = OverlayImageSingleton.getInstance();
+        //инициализация singleton для создания наложенных изображений
+        mOverlayImageSingleton = OverlayImageSingleton.getInstance();
+
+        //helper для сохранения изображений на SD или в Instagram
+        fileSaveHelper = new FileSaveHelper(this);
 
         //добавление панели переключения режимов роботы с изображениями
         RelativeLayout containerEditPhotoBar = (RelativeLayout) findViewById(R.id.containerEditPhotoBar);
@@ -79,87 +81,76 @@ public class RedactorActivity extends AppCompatActivity implements View.OnClickL
         mEditPhotoBar.setCustomObjectListener(this);
         containerEditPhotoBar.addView(mEditPhotoBar);
 
+        //установка фокуса на выбраном окошке
         setFocusOnLayout(true);
-    }
-
-    //в потоке получаем большые изображения
-    private void getBitmapFromURL(int number) {
-        final Intent intent = getIntent();
-
-        switch (number) {
-            case 1:
-                Glide.with(this)
-                        .load(intent.getStringExtra(Constants.FIRST_IMAGE_URI))
-                        .asBitmap()
-                        .override(Constants.IMAGE_MEDIUM_WIGHT,Constants.IMAGE_MEDIUM_HIGHT)
-                        .into(new SimpleTarget<Bitmap>() {
-                            @Override
-                            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                                mLeftImageBitmap = resource;
-                                mMiniLeftImageView.setImageBitmap(mLeftImageBitmap);
-                                mBigLeftImageView.setImageBitmap(mLeftImageBitmap);
-                                mBigLeftImageView.setImageAlpha(mLeftMiniImageProgressAlpha);
-                                mBigLeftImageView.setRotation(mLeftBigImageRotateAngle);
-                                mLeftCropperImageBitmap = mLeftImageBitmap;
-                            }
-                        });
-                break;
-            case 2:
-                Glide.with(this)
-                        .load(intent.getStringExtra(Constants.SECOND_IMAGE_URI))
-                        .asBitmap()
-                        .override(Constants.IMAGE_MEDIUM_WIGHT,Constants.IMAGE_MEDIUM_HIGHT)
-                        .into(new SimpleTarget<Bitmap>() {
-                            @Override
-                            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                                mRightImageBitmap = resource;
-                                mMiniRightImageView.setImageBitmap(mRightImageBitmap);
-                                mBigRightImageView.setImageBitmap(mRightImageBitmap);
-                                mBigRightImageView.setImageAlpha(mRightMiniImageProgressAlpha);
-                                mBigRightImageView.setRotation(mRightBigImageRotateAngle);
-                                mRightCropperImageBitmap = mRightImageBitmap;
-                                GettingTwoImagesActivity.hideProgress();
-                            }
-                        });
-                break;
-        }
-
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        getBitmapFromURL(1);
-        getBitmapFromURL(2);
+        loadLeftImage();
+        loadRightImage();
         mCropperImageNumber = 0;
+    }
+
+    //загрузка верхнего изображения из GettingTwoImageActivity
+    private void loadLeftImage() {
+        final Intent intent = getIntent();
+        Glide.with(this)
+                .load(intent.getStringExtra(Constants.FIRST_IMAGE_URI))
+                .asBitmap()
+                .override(Constants.IMAGE_MEDIUM_WIGHT, Constants.IMAGE_MEDIUM_HIGHT)
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                        setTopImage(resource);
+                    }
+                });
+    }
+
+    //загрузка нижнего изображения из GettingTwoImageActivity
+    private void loadRightImage() {
+        final Intent intent = getIntent();
+        Glide.with(this)
+                .load(intent.getStringExtra(Constants.SECOND_IMAGE_URI))
+                .asBitmap()
+                .override(Constants.IMAGE_MEDIUM_WIGHT, Constants.IMAGE_MEDIUM_HIGHT)
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                        setBottomImage(resource);
+                    }
+                });
+    }
+
+    // работа с верхним изображением из GettingTwoImageActivity
+    private void setTopImage(Bitmap resource) {
+        mLeftImageBitmap = resource;
+        mMiniLeftImageView.setImageBitmap(mLeftImageBitmap);
+        mBigLeftImageView.setImageBitmap(mLeftImageBitmap);
+        mBigLeftImageView.setImageAlpha(mLeftMiniImageProgressAlpha);
+        mBigLeftImageView.setRotation(mLeftBigImageRotateAngle);
+        mLeftCropperImageBitmap = mLeftImageBitmap;
+    }
+
+    // работа с нижним изображением из GettingTwoImageActivity
+    private void setBottomImage(Bitmap resource) {
+        mRightImageBitmap = resource;
+        mMiniRightImageView.setImageBitmap(mRightImageBitmap);
+        mBigRightImageView.setImageBitmap(mRightImageBitmap);
+        mBigRightImageView.setImageAlpha(mRightMiniImageProgressAlpha);
+        mBigRightImageView.setRotation(mRightBigImageRotateAngle);
+        mRightCropperImageBitmap = mRightImageBitmap;
+        GettingTwoImagesActivity.hideProgress();
     }
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        //изменение поворота для выделеного изображения
         if (mEditPhotoBar.getCurrentMode() == Constants.ROTATE_MODE) {
-            seekBar.setMax(4);
-            switch (mFocusedImage) {
-                case Constants.MINI_LEFT_IMAGE_FOCUS_NUMBER:
-                    mLeftBigImageRotateAngle = progress * 90;
-                    mBigLeftImageView.setRotation(mLeftBigImageRotateAngle);
-                    break;
-                case Constants.MINI_RIGHT_IMAGE_FOCUS_NUMBER:
-                    mRightBigImageRotateAngle = progress * 90;
-                    mBigRightImageView.setRotation(mRightBigImageRotateAngle);
-                    break;
-            }
+            rotateChange(seekBar,progress);
         } else if (mEditPhotoBar.getCurrentMode() == Constants.TRANSPARENCY_MODE) {
-            seekBar.setMax(255);
-            switch (mFocusedImage) {
-                case Constants.MINI_LEFT_IMAGE_FOCUS_NUMBER:
-                    mLeftMiniImageProgressAlpha = progress;
-                    mBigLeftImageView.setImageAlpha(mLeftMiniImageProgressAlpha);
-                    break;
-                case Constants.MINI_RIGHT_IMAGE_FOCUS_NUMBER:
-                    mRightMiniImageProgressAlpha = progress;
-                    mBigRightImageView.setImageAlpha(mRightMiniImageProgressAlpha);
-                    break;
-            }
+           transparencyChange(seekBar,progress);
         }
     }
 
@@ -177,7 +168,6 @@ public class RedactorActivity extends AppCompatActivity implements View.OnClickL
         switch (v.getId()) {
             case R.id.MiniFrameFirst:
                 mFocusedImage = Constants.MINI_LEFT_IMAGE_FOCUS_NUMBER;
-
                 if (mEditPhotoBar.getCurrentMode() == Constants.CROPPER_MODE) {
                     mCropperImage.setImageBitmap(mLeftImageBitmap);
                     mCropperImageNumber = 1;
@@ -187,8 +177,6 @@ public class RedactorActivity extends AppCompatActivity implements View.OnClickL
                 mFocusedImage = Constants.MINI_RIGHT_IMAGE_FOCUS_NUMBER;
                 if (mEditPhotoBar.getCurrentMode() == Constants.CROPPER_MODE) {
                     mCropperImage.setImageBitmap(mRightImageBitmap);
-                    /*mCropperImage.setImageBitmap(mCreatingNewImage.getImageForCropper(mRightImageBitmap,
-                            mRightBigImageRotateAngle, mRightMiniImageProgressAlpha));*/
                     mCropperImageNumber = 2;
                 }
                 break;
@@ -196,6 +184,37 @@ public class RedactorActivity extends AppCompatActivity implements View.OnClickL
         setFocusOnLayout(true);
     }
 
+    //изменение поворота для выделеного изображения
+    private void rotateChange(SeekBar seekBar,int progress){
+        seekBar.setMax(Constants.MAX_ROTATE_PROGRESS);
+        switch (mFocusedImage) {
+            case Constants.MINI_LEFT_IMAGE_FOCUS_NUMBER:
+                mLeftBigImageRotateAngle = progress * Constants.STEP__ROTATE_PROGRESS;
+                mBigLeftImageView.setRotation(mLeftBigImageRotateAngle);
+                break;
+            case Constants.MINI_RIGHT_IMAGE_FOCUS_NUMBER:
+                mRightBigImageRotateAngle = progress * Constants.STEP__ROTATE_PROGRESS;
+                mBigRightImageView.setRotation(mRightBigImageRotateAngle);
+                break;
+        }
+    }
+
+    //изменение прозрачности для выделеного изображения
+    private void transparencyChange(SeekBar seekBar,int progress){
+        seekBar.setMax(Constants.MAX_TRANSPARENCY_PROGRESS);
+        switch (mFocusedImage) {
+            case Constants.MINI_LEFT_IMAGE_FOCUS_NUMBER:
+                mLeftMiniImageProgressAlpha = progress;
+                mBigLeftImageView.setImageAlpha(mLeftMiniImageProgressAlpha);
+                break;
+            case Constants.MINI_RIGHT_IMAGE_FOCUS_NUMBER:
+                mRightMiniImageProgressAlpha = progress;
+                mBigRightImageView.setImageAlpha(mRightMiniImageProgressAlpha);
+                break;
+        }
+    }
+
+    //получение обрезаного левого или правого изображений
     private void setCropperImage() {
         switch (mCropperImageNumber) {
             case 1:
@@ -207,39 +226,25 @@ public class RedactorActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
+    // возвращает наложенное изображение
     private Bitmap createOverlayImageBitmap() {
-
-        if (mLeftCropperImageBitmap == null) {
-            mLeftCropperImageBitmap = mLeftImageBitmap;
-        }
-        if (mRightCropperImageBitmap == null) {
-            mRightCropperImageBitmap = mRightImageBitmap;
-        }
-
-        if (mCropperImageNumber != 0) {
-            return mImageSingleton.createNewOverlayImage(mLeftCropperImageBitmap,
-                    mRightCropperImageBitmap, mLeftBigImageRotateAngle, mRightBigImageRotateAngle,
-                    mLeftMiniImageProgressAlpha, mRightMiniImageProgressAlpha);
-        } else {
-            return mImageSingleton.createNewOverlayImage(mLeftImageBitmap,
-                    mRightImageBitmap, mLeftBigImageRotateAngle, mRightBigImageRotateAngle,
-                    mLeftMiniImageProgressAlpha, mRightMiniImageProgressAlpha);
-        }
-
+        return mOverlayImageSingleton.createNewOverlayImage(mLeftImageBitmap,
+                mRightImageBitmap, mLeftBigImageRotateAngle, mRightBigImageRotateAngle,
+                mLeftMiniImageProgressAlpha, mRightMiniImageProgressAlpha);
     }
 
+    //вставляем обрезанное изображение в Cropper для его подальшей обрезки
     public void overlayImageCropper() {
-        Bitmap tempCropperBitmap = mImageSingleton.createNewOverlayImage(mLeftCropperImageBitmap,
+        Bitmap tempCropperBitmap = mOverlayImageSingleton.createNewOverlayImage(mLeftCropperImageBitmap,
                 mRightCropperImageBitmap, mLeftBigImageRotateAngle, mRightBigImageRotateAngle,
                 mLeftMiniImageProgressAlpha, mRightMiniImageProgressAlpha);
         mCropperImage.setImageBitmap(tempCropperBitmap);
-
     }
 
+    //выделение выбраного окошка
     public void setFocusOnLayout(Boolean isSetFocus) {
         mLeftMiniImageLinearLayout.setBackgroundColor(Constants.FOCUS_COLOR_GRAY);
         mRightMiniImageLinearLayout.setBackgroundColor(Constants.FOCUS_COLOR_GRAY);
-
         if (isSetFocus) {
             switch (mFocusedImage) {
                 case Constants.MINI_LEFT_IMAGE_FOCUS_NUMBER:
@@ -254,13 +259,12 @@ public class RedactorActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar
+        // Inflate the menu
         getMenuInflater().inflate(R.menu.share_menu, menu);
-
+        //отображение кнопри перехода к предыдущему активити
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-
         return true;
     }
 
@@ -272,42 +276,33 @@ public class RedactorActivity extends AppCompatActivity implements View.OnClickL
                 break;
             case R.id.menu_item_share:
                 saveImage();
+                // сохранение полученного изображения в Instagram
+                fileSaveHelper.createInstagramIntent();
                 break;
             case R.id.menu_item_save:
-                FileSaveHelper fileSaveHelper = new FileSaveHelper(RedactorActivity.this);
-
-                if (mEditPhotoBar.getCurrentMode() == Constants.CROPPER_MODE) {
-                    mNewOverlayImageBitmap = mCropperImage.getCroppedImage();
-                } else {
-                    //получение обрезаного или полного изображения
-                    mNewOverlayImageBitmap = createOverlayImageBitmap();
-                }
-                // сохранение полученного изображения на SD
-                fileSaveHelper.saveImageOnSD(mNewOverlayImageBitmap);
+                saveImage();
                 break;
         }
         return true;
     }
 
+    //сохранение изображения на SD
     private void saveImage() {
-        FileSaveHelper fileSaveHelper = new FileSaveHelper(RedactorActivity.this);
-
+        //получение обрезаного или полного изображения
         if (mEditPhotoBar.getCurrentMode() == Constants.CROPPER_MODE) {
             mNewOverlayImageBitmap = mCropperImage.getCroppedImage();
         } else {
-            //получение обрезаного или полного изображения
             mNewOverlayImageBitmap = createOverlayImageBitmap();
         }
-
         // сохранение полученного изображения на SD
         fileSaveHelper.saveImageOnSD(mNewOverlayImageBitmap);
-        // сохранение полученного изображения в Instagram
-        fileSaveHelper.createInstagramIntent();
     }
 
+    //переключение между режимами обработки изображений
     @Override
     public void onSelectedMode(int currentMode) {
         setCropperImage();
+        mCropperImageNumber = 0;
         mBigLeftImageView.setImageBitmap(mLeftCropperImageBitmap);
         mBigRightImageView.setImageBitmap(mRightCropperImageBitmap);
         switch (currentMode) {
@@ -325,28 +320,34 @@ public class RedactorActivity extends AppCompatActivity implements View.OnClickL
 
     private void rotateImage() {
         setFocusOnLayout(true);
-        mCropperImage.setVisibility(View.INVISIBLE);
-        mImageProgressSeekBar.setVisibility(View.VISIBLE);
-        mBigLeftImageView.setVisibility(View.VISIBLE);
-        mBigRightImageView.setVisibility(View.VISIBLE);
+        setViewVisibility(mCropperImage, false);
     }
 
     private void transparencyImage() {
         setFocusOnLayout(true);
-        mCropperImage.setVisibility(View.INVISIBLE);
-        mImageProgressSeekBar.setVisibility(View.VISIBLE);
-        mBigLeftImageView.setVisibility(View.VISIBLE);
-        mBigRightImageView.setVisibility(View.VISIBLE);
+        setViewVisibility(mCropperImage, false);
     }
 
     private void cropperImage() {
         setFocusOnLayout(false);
-        mBigLeftImageView.setVisibility(View.INVISIBLE);
-        mBigRightImageView.setVisibility(View.INVISIBLE);
-        mImageProgressSeekBar.setVisibility(View.INVISIBLE);
-        mCropperImage.setVisibility(View.VISIBLE);
-
+        setViewVisibility(mCropperImage, true);
         //обрезка наложеного изображения
         overlayImageCropper();
+    }
+
+    private void setViewVisibility(View view, Boolean isVisible) {
+        if (isVisible) {
+            mCropperImage.setVisibility(View.INVISIBLE);
+            mImageProgressSeekBar.setVisibility(View.INVISIBLE);
+            mBigLeftImageView.setVisibility(View.INVISIBLE);
+            mBigRightImageView.setVisibility(View.INVISIBLE);
+            view.setVisibility(View.VISIBLE);
+        } else {
+            mCropperImage.setVisibility(View.VISIBLE);
+            mImageProgressSeekBar.setVisibility(View.VISIBLE);
+            mBigLeftImageView.setVisibility(View.VISIBLE);
+            mBigRightImageView.setVisibility(View.VISIBLE);
+            view.setVisibility(View.INVISIBLE);
+        }
     }
 }

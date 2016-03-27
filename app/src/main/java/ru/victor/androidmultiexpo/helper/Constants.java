@@ -44,6 +44,11 @@ public class Constants {
     public static final int FOCUS_COLOR_GRAY = Color.parseColor("#BDBDBD");
     public static final int FOCUS_COLOR_WHITE = Color.parseColor("#ffffff");
 
+    //максимальные значения для seekBar в разных режимах
+    public static final int MAX_TRANSPARENCY_PROGRESS = 255;
+    public static final int MAX_ROTATE_PROGRESS = 4;
+    public static final int STEP__ROTATE_PROGRESS = 90;
+
     //режими работы с изображениями
     public static final int ROTATE_MODE = 1;
     public static final int TRANSPARENCY_MODE = 2;

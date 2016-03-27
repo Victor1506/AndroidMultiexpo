@@ -66,11 +66,9 @@ public class InstagramConnectFragment extends Fragment implements OnLoginComplet
             mSocialNetwork.setOnLoginCompleteListener(this);
             if (!mSocialNetwork.isConnected()) {
                 mSocialNetwork.requestLogin();
-
             } else {
                 connectToInstagram();
             }
-
         }
         return rootView;
     }
@@ -87,7 +85,6 @@ public class InstagramConnectFragment extends Fragment implements OnLoginComplet
     @Override
     public void onLoginSuccess(int socialNetworkID) {
         GettingTwoImagesActivity.hideProgress();
-
         Log.d("tag", "success");
         connectToInstagram();
     }

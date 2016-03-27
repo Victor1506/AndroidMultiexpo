@@ -57,5 +57,4 @@ public class ImageAdapter extends BaseAdapter {
                 Constants.IMAGE_IN_GRID_SIZE));
         return imageView;
     }
-
 }
